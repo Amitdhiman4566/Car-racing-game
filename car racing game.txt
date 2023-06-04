@@ -1,0 +1,77 @@
+import java.awt.*;
+import java.awt.event.*;
+
+public class CarRacingGame extends Frame implements Runnable {
+    private int carX;
+    private int carY;
+    private int roadY;
+    private boolean gameOver;
+
+    public CarRacingGame() {
+        setSize(800, 600);
+        setTitle("Car Racing Game");
+        setResizable(false);
+        setVisible(true);
+
+        carX = 350;
+        carY = 500;
+        roadY = 0;
+        gameOver = false;
+
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                handleKeyPress(e.getKeyCode());
+            }
+        });
+
+        new Thread(this).start();
+    }
+
+    public void paint(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        g.setColor(Color.GREEN);
+        g.fillRect(50, roadY, 700, 600);
+
+        g.setColor(Color.WHITE);
+        g.fillRect(carX, carY, 100, 150);
+
+        if (gameOver) {
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.drawString("Game Over", 300, 300);
+        }
+    }
+
+    public void run() {
+        while (!gameOver) {
+            try {
+                Thread.sleep(10);
+                moveRoad();
+                repaint();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void moveRoad() {
+        roadY += 5;
+        if (roadY >= getHeight()) {
+            roadY = 0;
+        }
+    }
+
+    private void handleKeyPress(int keyCode) {
+        if (keyCode == KeyEvent.VK_LEFT) {
+            carX -= 10;
+        } else if (keyCode == KeyEvent.VK_RIGHT) {
+            carX += 10;
+        }
+    }
+
+    public static void main(String[] args) {
+        new CarRacingGame();
+    }
+}
